@@ -26,18 +26,20 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    require(sender() == self.admin);
+    require(sender() == self.admin, "Insufficient privelegies");
     send(SendParameters{
       to: msg.sender,
-      value: context().value
+      value: 0,
+      mode: SendRemainingValue,
     });
   }
 
   receive(msg: Slice) {
-    // send(SendParameters{
-    //   to: self.admin,
-    //   value: context().value,
-    //   body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()
-    // });
+    send(SendParameters{
+      to: self.admin,
+      value: 0,
+      mode: SendRemainingValue,
+      body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()
+    });
   }
 }
