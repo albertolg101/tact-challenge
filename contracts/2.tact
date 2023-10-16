@@ -39,7 +39,7 @@ contract Task2 with Deployable {
       to: self.admin,
       value: 0,
       mode: 0x42,
-      body: beginCell().storeAddress(sender()).storeSlice(msg).endCell()
+      body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()
     });
   }
 }
