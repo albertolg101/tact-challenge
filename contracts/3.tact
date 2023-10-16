@@ -67,11 +67,38 @@ contract Task3 with Deployable {
   }
 
   receive(msg: TokenNotification) {
+    require(msg.from == self.jettonAddressA || msg.from == self.jettonAddressB, "Invalid jetton address");
+
+    if (sender() == self.owner) {
+      if (msg.from == self.jettonAddressA) {
+        self.aAmount = self.aAmount + msg.amount;
+      } else {
+        self.bAmount = self.bAmount + msg.amount;
+      }
+    } else {
+      if (msg.from == self.jettonAddressA) {
+        let resAmount: Int = self.aAmount * self.decimal / self.bAmount * msg.amount / self.decimal;
+        require(self.bAmount >= resAmount, "Not enough jettons");
+      } else {
+        let resAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
+        require(self.bAmount >= resAmount, "Not enough jettons");
+      }
+    }
   } 
   
   get fun price(jetton: Address): Int { 
+    if (jetton == self.jettonAddressA) {
+      return self.aAmount * self.decimal / self.bAmount;
+    }
+
+    return self.bAmount * self.decimal / self.aAmount;
   }
   
   get fun balance(jetton: Address): Int { 
+    if (jetton == self.jettonAddressA) {
+      return self.aAmount;
+    } 
+
+    return self.bAmount;
   }
 }
