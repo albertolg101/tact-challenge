@@ -76,13 +76,15 @@ contract Task3 with Deployable {
       } else {
         self.bAmount = self.bAmount + msg.amount;
       }
+
     } else {
+
       if (sender() == self.jettonAddressA) {
-        let resAmount: Int = self.aAmount * self.decimal / self.bAmount * msg.amount / self.decimal;
+        let resAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
 
         self.bAmount = self.bAmount - resAmount;
         require(self.bAmount >= 0, "Not enough jettons");
-        self.aAmount = self.aAmount + resAmount;
+        self.aAmount = self.aAmount + msg.amount;
 
         send(SendParameters{
           to: self.jettonAddressB,
@@ -100,7 +102,7 @@ contract Task3 with Deployable {
           }.toCell()
         });
       } else {
-        let resAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
+        let resAmount: Int = self.aAmount * self.decimal / self.bAmount * msg.amount / self.decimal;
         
         self.aAmount = self.aAmount - resAmount;
         require(self.aAmount >= 0, "Not enough jettons");
