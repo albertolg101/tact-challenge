@@ -26,11 +26,11 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    require(sender() == self.admin, "Insufficient privelegies");
-    send(SendParameters{
-      to: msg.sender,
-      value: context().value
-    });
+    // require(sender() == self.admin);
+    // send(SendParameters{
+    //   to: msg.sender,
+    //   value: context().value
+    // });
   }
 
   receive(msg: Slice) {
