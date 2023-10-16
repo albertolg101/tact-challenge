@@ -68,21 +68,59 @@ contract Task3 with Deployable {
   }
 
   receive(msg: TokenNotification) {
-    require(msg.from == self.jettonAddressA || msg.from == self.jettonAddressB, "Invalid jetton address");
+    require((sender() == self.jettonAddressA) || (sender() == self.jettonAddressB), "Invalid jetton address");
 
-    if (sender() == self.owner) {
+    if (msg.from == self.owner) {
       if (msg.from == self.jettonAddressA) {
         self.aAmount = self.aAmount + msg.amount;
       } else {
         self.bAmount = self.bAmount + msg.amount;
       }
     } else {
-      if (msg.from == self.jettonAddressA) {
+      if (sender() == self.jettonAddressA) {
         let resAmount: Int = self.aAmount * self.decimal / self.bAmount * msg.amount / self.decimal;
-        require(self.bAmount >= resAmount, "Not enough jettons");
+
+        self.bAmount = self.bAmount - resAmount;
+        require(self.bAmount >= 0, "Not enough jettons");
+        self.aAmount = self.aAmount + resAmount;
+
+        send(SendParameters{
+          to: self.jettonAddressB,
+          value: 0,
+          bounce: false,
+          mode: SendRemainingValue,
+          body: TokenTransfer{
+            queryId: 0,
+            amount: resAmount,
+            destination: msg.from,
+            responseDestination: myAddress(),
+            customPayload: null,
+            forwardTonAmount: ton("0.01"),
+            forwardPayload: emptySlice()
+          }.toCell()
+        });
       } else {
         let resAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
-        require(self.bAmount >= resAmount, "Not enough jettons");
+        
+        self.aAmount = self.aAmount - resAmount;
+        require(self.aAmount >= 0, "Not enough jettons");
+        self.bAmount = self.bAmount + msg.amount;
+
+        send(SendParameters{
+          to: self.jettonAddressA,
+          value: 0,
+          bounce: false,
+          mode: SendRemainingValue,
+          body: TokenTransfer{
+            queryId: 0,
+            amount: resAmount,
+            destination: msg.from,
+            responseDestination: myAddress(),
+            customPayload: null,
+            forwardTonAmount: ton("0.01"),
+            forwardPayload: emptySlice()
+          }.toCell()
+        });
       }
     }
   } 
