@@ -48,7 +48,7 @@ message NftWithdrawal {
 
 contract Task4 with Deployable {
   seed: Int as uint128;
-  time: Int;
+  time: Int as uint32;
   nft: Address?;
   owner: Address?;
   
@@ -70,11 +70,11 @@ contract Task4 with Deployable {
         value: 0,
         mode: SendRemainingValue,
         body: Transfer {
-          queryId: 0x5fcc3d14,
+          queryId: msg.queryId,
           newOwner: msg.prevOwner,
           responseDestination: myAddress(),
           customPayload: null,
-          forwardAmount: ton("0.01"),
+          forwardAmount: 0,
           forwardPayload: emptySlice()
         }.toCell()
       });
@@ -88,15 +88,15 @@ contract Task4 with Deployable {
     }
 
     send(SendParameters{
-      to: self.nft!!,
+      to: msg.nftAddress,
       value: 0,
       mode: SendRemainingBalance,
       body: Transfer{
-          queryId: 0x5fcc3d14,
+          queryId: msg.queryId,
           newOwner: self.owner!!,
           responseDestination: myAddress(),
           customPayload: null,
-          forwardAmount: ton("0.01"),
+          forwardAmount: 0,
           forwardPayload: emptySlice()
       }.toCell()
     });
