@@ -107,9 +107,9 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    let remaining: Int as uint32 = self.time - now();
-    if (remaining >= 0) {
-      return remaining;
+    let now: Int = now();
+    if (self.time >= now) {
+      return self.time - now;
     }
     return 0;
   }
