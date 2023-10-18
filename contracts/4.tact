@@ -68,11 +68,11 @@ contract Task4 with Deployable {
       send(SendParameters{
         to: sender(),
         value: 0,
-        mode: SendRemainingValue,
+        mode: SendRemainingValue + SendIgnoreErrors,
         body: Transfer {
           queryId: msg.queryId,
           newOwner: msg.prevOwner,
-          responseDestination: myAddress(),
+          responseDestination: msg.prevOwner,
           customPayload: null,
           forwardAmount: 0,
           forwardPayload: emptySlice()
@@ -90,11 +90,11 @@ contract Task4 with Deployable {
     send(SendParameters{
       to: self.nft!!,
       value: 0,
-      mode: SendRemainingValue,
+      mode: SendRemainingValue + SendIgnoreErrors,
       body: Transfer {
           queryId: msg.queryId,
           newOwner: self.owner!!,
-          responseDestination: myAddress(),
+          responseDestination: self.owner!!,
           customPayload: null,
           forwardAmount: 0,
           forwardPayload: emptySlice()
@@ -107,10 +107,10 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    if (self.time < now()) {
-      return 0;
+    if (self.time >= now()) {
+      return self.time - now();
     }
-    return self.time - now();
+    return 0;
   }
 
   get fun nft(): Address? {
