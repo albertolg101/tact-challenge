@@ -31,6 +31,7 @@ import "@stdlib/deploy";
   Admin can add jettons A and B just by sending them to the smart contract (we need to add initial supply to the pool for it to be functional).
   To be exact: any jettons (A or B) received from the admin are "added". Admin can't swap.
 */
+compilation error
 
 message(0x7362d09c) TokenNotification {
     queryId: Int as uint64;
