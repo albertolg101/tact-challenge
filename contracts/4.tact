@@ -107,7 +107,7 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    return now() - self.time;
+    return self.time - now();
   }
 
   get fun nft(): Address? {
