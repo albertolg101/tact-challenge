@@ -72,6 +72,7 @@ contract Task3 with Deployable {
   fun trade(msg: TokenNotification, jettonAddressA: Address, jettonAddressB: Address) {
     if (msg.from == self.owner) {
       self.aAmount;
+      return;
     }
 
     let responseAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
