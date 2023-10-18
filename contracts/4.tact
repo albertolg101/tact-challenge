@@ -102,6 +102,7 @@ contract Task4 with Deployable {
     });
 
     self.owner = null;
+    self.nft = null;
     self.time = 0;
   }
 
@@ -114,9 +115,6 @@ contract Task4 with Deployable {
   }
 
   get fun nft(): Address? {
-    if (self.owner == null) {
-      return null;
-    }
     return self.nft;
   }
 
