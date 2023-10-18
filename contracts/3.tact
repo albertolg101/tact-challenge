@@ -71,7 +71,7 @@ contract Task3 with Deployable {
     require((sender() == self.jettonAddressA) || (sender() == self.jettonAddressB), "Invalid jetton address");
 
     if (msg.from == self.owner) {
-      if (msg.from == self.jettonAddressA) {
+      if (sender() == self.jettonAddressA) {
         self.aAmount = self.aAmount + msg.amount;
       } else {
         self.bAmount = self.bAmount + msg.amount;
@@ -82,8 +82,8 @@ contract Task3 with Deployable {
       if (sender() == self.jettonAddressA) {
         let resAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
 
+        require(self.bAmount >= resAmount, "Not enough jettons");
         self.bAmount = self.bAmount - resAmount;
-        require(self.bAmount >= 0, "Not enough jettons");
         self.aAmount = self.aAmount + msg.amount;
 
         send(SendParameters{
@@ -104,8 +104,8 @@ contract Task3 with Deployable {
       } else {
         let resAmount: Int = self.aAmount * self.decimal / self.bAmount * msg.amount / self.decimal;
         
+        require(self.aAmount >= resAmount, "Not enough jettons");
         self.aAmount = self.aAmount - resAmount;
-        require(self.aAmount >= 0, "Not enough jettons");
         self.bAmount = self.bAmount + msg.amount;
 
         send(SendParameters{
