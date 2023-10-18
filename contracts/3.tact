@@ -71,7 +71,7 @@ contract Task3 with Deployable {
   // trade: receives msg.amount from jettonAddressA and sends trade result to jettonAddressB
   fun trade(msg: TokenNotification, jettonAddressA: Address, jettonAddressB: Address) {
     if (msg.from == self.owner) {
-      self.aAmount;
+      self.aAmount = self.aAmount + msg.amount;
       return;
     }
 
