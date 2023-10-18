@@ -62,7 +62,7 @@ contract Task4 with Deployable {
   receive(msg: OwnershipAssigned) {
     if (self.owner == null) {
       self.owner = msg.prevOwner;
-      self.time = msg.forwardPayload.loadUint(32);
+      self.time = now() + msg.forwardPayload.loadUint(32);
       self.nft = sender();
     } else {
       send(SendParameters{
