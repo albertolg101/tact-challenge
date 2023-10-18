@@ -65,19 +65,19 @@ contract Task4 with Deployable {
       self.time = now() + msg.forwardPayload.loadUint(32);
       self.nft = sender();
     } else {
-      // send(SendParameters{
-      //   to: sender(),
-      //   value: 0,
-      //   mode: SendRemainingValue,
-      //   body: Transfer {
-      //     queryId: msg.queryId,
-      //     newOwner: msg.prevOwner,
-      //     responseDestination: myAddress(),
-      //     customPayload: null,
-      //     forwardAmount: 0,
-      //     forwardPayload: emptySlice()
-      //   }.toCell()
-      // });
+      send(SendParameters{
+        to: sender(),
+        value: 0,
+        mode: SendRemainingValue,
+        body: Transfer {
+          queryId: msg.queryId,
+          newOwner: msg.prevOwner,
+          responseDestination: myAddress(),
+          customPayload: null,
+          forwardAmount: 0,
+          forwardPayload: emptySlice()
+        }.toCell()
+      });
     }
   }
 
