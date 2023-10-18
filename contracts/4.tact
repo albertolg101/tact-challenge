@@ -88,7 +88,7 @@ contract Task4 with Deployable {
     }
 
     send(SendParameters{
-      to: self.nft!!,
+      to: msg.nftAddress,
       value: 0,
       mode: SendRemainingValue + SendIgnoreErrors,
       body: Transfer {
@@ -102,20 +102,21 @@ contract Task4 with Deployable {
     });
 
     self.owner = null;
-    self.nft = null;
-    self.time = 0;
   }
 
   get fun time(): Int {
     let now: Int = now();
-    if (self.time >= now) {
+    if ((self.time >= now) && self.owner != null) {
       return self.time - now;
     }
     return 0;
   }
 
   get fun nft(): Address? {
-    return self.nft;
+    if (self.owner != null) {
+      return self.nft;
+    }
+    return null;
   }
 
   get fun owner(): Address? {
