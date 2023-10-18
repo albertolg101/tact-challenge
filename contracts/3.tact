@@ -121,13 +121,13 @@ contract Task3 with Deployable {
 
       let aAmount: Int = self.aAmount;
       self.aAmount = self.bAmount;
-      self.bAmount = self.aAmount;
+      self.bAmount = aAmount;
 
       self.trade(msg, self.jettonAddressB, self.jettonAddressA);
 
       aAmount = self.aAmount;
       self.aAmount = self.bAmount;
-      self.bAmount = self.aAmount;
+      self.bAmount = aAmount;
     }
   } 
   
