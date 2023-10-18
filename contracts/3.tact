@@ -50,6 +50,7 @@ message(0xf8a7ea5) TokenTransfer {
      forwardPayload: Slice as remaining; // should be emptySlice()
 }
 
+
 contract Task3 with Deployable {
   owner: Address;
   aAmount: Int;
@@ -67,63 +68,65 @@ contract Task3 with Deployable {
     self.decimal = 1000000000;
   }
 
-  receive(msg: TokenNotification) {
-    require((sender() == self.jettonAddressA) || (sender() == self.jettonAddressB), "Invalid jetton address");
-
+  // trade: receives msg.amount from jettonAddressA and sends trade result to jettonAddressB
+  fun trade(msg: TokenNotification, jettonAddressA: Address, jettonAddressB: Address) {
     if (msg.from == self.owner) {
-      if (sender() == self.jettonAddressA) {
-        self.aAmount = self.aAmount + msg.amount;
-      } else {
-        self.bAmount = self.bAmount + msg.amount;
-      }
+      self.aAmount;
+    }
+
+    let responseAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
+
+    if (self.bAmount < responseAmount) {
+      send(SendParameters{
+        to: jettonAddressA,
+        value: 0,
+        mode: SendRemainingValue,
+        body: TokenTransfer{
+          queryId: 0,
+          amount: self.aAmount,
+          destination: msg.from,
+          responseDestination: myAddress(),
+          customPayload: null,
+          forwardTonAmount: ton("0.01"),
+          forwardPayload: emptySlice()
+        }.toCell()
+      });
 
     } else {
+      self.aAmount = self.aAmount + msg.amount;
+      self.bAmount = self.bAmount - responseAmount;
+      send(SendParameters{
+        to: jettonAddressB,
+        value: 0,
+        mode: SendRemainingValue,
+        body: TokenTransfer{
+          queryId: 0,
+          amount: responseAmount,
+          destination: msg.from,
+          responseDestination: myAddress(),
+          customPayload: null,
+          forwardTonAmount: ton("0.01"),
+          forwardPayload: emptySlice()
+        }.toCell()
+      });
+    }
+  }
 
-      if (sender() == self.jettonAddressA) {
-        let resAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
+  receive(msg: TokenNotification) {
+    if (sender() == self.jettonAddressA) {
+      self.trade(msg, self.jettonAddressA, self.jettonAddressB);
+    } else {
+      require(sender() == self.jettonAddressB, "Invalid jetton address");
 
-        require(self.bAmount >= resAmount, "Not enough jettons");
-        self.bAmount = self.bAmount - resAmount;
-        self.aAmount = self.aAmount + msg.amount;
+      let aAmount: Int = self.aAmount;
+      self.aAmount = self.bAmount;
+      self.bAmount = self.aAmount;
 
-        send(SendParameters{
-          to: self.jettonAddressB,
-          value: 0,
-          bounce: false,
-          mode: SendRemainingValue,
-          body: TokenTransfer{
-            queryId: 0,
-            amount: resAmount,
-            destination: msg.from,
-            responseDestination: myAddress(),
-            customPayload: null,
-            forwardTonAmount: ton("0.01"),
-            forwardPayload: emptySlice()
-          }.toCell()
-        });
-      } else {
-        let resAmount: Int = self.aAmount * self.decimal / self.bAmount * msg.amount / self.decimal;
-        
-        require(self.aAmount >= resAmount, "Not enough jettons");
-        self.aAmount = self.aAmount - resAmount;
-        self.bAmount = self.bAmount + msg.amount;
+      self.trade(msg, self.jettonAddressB, self.jettonAddressA);
 
-        send(SendParameters{
-          to: self.jettonAddressA,
-          value: 0,
-          bounce: false,
-          mode: SendRemainingValue,
-          body: TokenTransfer{
-            queryId: 0,
-            amount: resAmount,
-            destination: msg.from,
-            responseDestination: myAddress(),
-            customPayload: null,
-            forwardTonAmount: ton("0.01"),
-            forwardPayload: emptySlice()
-          }.toCell()
-        });
-      }
+      aAmount = self.aAmount;
+      self.aAmount = self.bAmount;
+      self.bAmount = self.aAmount;
     }
   } 
   
