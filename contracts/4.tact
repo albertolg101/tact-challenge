@@ -102,21 +102,20 @@ contract Task4 with Deployable {
     });
 
     self.owner = null;
+    self.nft = null;
+    self.time = 0;
   }
 
   get fun time(): Int {
     let now: Int = now();
-    if ((self.time >= now) && self.owner != null) {
+    if (self.time >= now) {
       return self.time - now;
     }
     return 0;
   }
 
   get fun nft(): Address? {
-    if (self.owner != null) {
-      return self.nft;
-    }
-    return null;
+    return self.nft;
   }
 
   get fun owner(): Address? {
