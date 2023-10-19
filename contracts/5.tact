@@ -67,24 +67,74 @@ message(0x5fcc3d14) Transfer {
 contract Task5 with Deployable {
   seed: Int as uint128;
   owner: Address;
+  nfts: map<Int as uint16, Address>;
+  nfts_counter: Int as uint16;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
+    self.nfts_counter = 0;
   }
 
   receive(msg: OwnershipAssigned) {
+    if (msg.prevOwner == self.owner) {
+      self.nfts.set(
+        self.nfts_counter,
+        sender()
+      );
+    } else {
+      nativeReserve(0, 3);
+      if context().value < ton("2.1") {
+        send(SendParameters{
+          to: sender(),
+          value: 0,
+          mode: SendRemainingValue + SendIgnoreErrors,
+          body: Transfer {
+            queryId: 0,
+            newOwner: msg.prevOwner,
+            responseDestination: msg.prevOwner,
+            customPayload: emptyCell(),
+            forwardAmount: 0,
+            forwardPayload: emptySlice()
+          }.toCell()
+        });
+      } else {
+        nativeReserve(ton("2.0"), 3);
+        send(SendParameters{
+          to: sender(),
+          value: 0,
+          mode: SendRemainingValue + SendIgnoreErrors,
+          body: Transfer {
+            queryId: 0,
+            newOwner: msg.prevOwner,
+            responseDestination: msg.prevOwner,
+            customPayload: emptyCell(),
+            forwardAmount: 0,
+            forwardPayload: emptySlice()
+          }.toCell()
+        });
+      }
+    }
   }
 
   receive(msg: AdminWithdrawalProfit) {
+    require(sender() == self.owner, "Insufficient privelegies");
+    send(SendParameters{
+      to: sender(),
+      value: myBalance() - ton("0.1"),
+      mode: SendRemainingValue + SendIgnoreErrors,
+      body: AdminFetchProfit{queryId: msg.queryId}.toCell()
+    });
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
   }
 
   get fun profit(): Int { 
+    return myBalance() - ton("0.1");
   }
   
   get fun nfts(): map<Int as uint16, Address> { 
+    return self.nfts;
   }
 }
