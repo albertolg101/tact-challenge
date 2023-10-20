@@ -85,35 +85,19 @@ contract Task5 with Deployable {
       );
       self.nfts_counter = self.nfts_counter + 1;
     } else {
-      if context().value < ton("2.1") {
-        send(SendParameters{
-          to: sender(),
-          value: 0,
-          mode: SendRemainingValue + SendIgnoreErrors,
-          body: Transfer {
-            queryId: msg.queryId,
-            newOwner: msg.prevOwner,
-            responseDestination: msg.prevOwner,
-            customPayload: emptyCell(),
-            forwardAmount: 0,
-            forwardPayload: emptySlice()
-          }.toCell()
-        });
-      } else {
-        send(SendParameters{
-          to: sender(),
-          value: context().value - ton("2.0"),
-          mode: 0,
-          body: Transfer {
-            queryId: msg.queryId,
-            newOwner: msg.prevOwner,
-            responseDestination: msg.prevOwner,
-            customPayload: emptyCell(),
-            forwardAmount: 0,
-            forwardPayload: emptySlice()
-          }.toCell()
-        });
-      }
+      if context().value >= context().readForwardFee() {
+        if context().value >= ton("2.1") {
+          nativeReserve(ton("2.0"), 4);
+        }
+        self.reply(Transfer{
+          queryId: msg.queryId,
+          newOwner: msg.prevOwner,
+          responseDestination: msg.prevOwner,
+          customPayload: emptyCell(),
+          forwardAmount: 0,
+          forwardPayload: emptySlice()
+        }.toCell());
+      } 
     }
   }
 
