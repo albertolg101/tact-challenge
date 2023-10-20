@@ -86,22 +86,16 @@ contract Task5 with Deployable {
         nativeReserve(ton("2.0"), 4);
         
         if self.nfts_counter == 0 {
-          send(SendParameters{
-            to: sender(),
-            value: 0,
-            mode: SendRemainingValue + SendIgnoreErrors,
-            body: Transfer{
-                queryId: msg.queryId,
-                newOwner: msg.prevOwner,
-                responseDestination: msg.prevOwner,
-                customPayload: null,
-                forwardAmount: 0,
-                forwardPayload: emptySlice()
-            }.toCell()
-          });
-        
-       } else {
-          let index: Int = randomInt() % self.nfts_counter;
+          self.reply(Transfer{
+              queryId: msg.queryId,
+              newOwner: msg.prevOwner,
+              responseDestination: msg.prevOwner,
+              customPayload: null,
+              forwardAmount: 0,
+              forwardPayload: emptySlice()
+          }.toCell());
+        } else {
+          let index: Int = random(0, self.nfts_counter - 1);
           
           send(SendParameters{
             to: self.nfts.get(index)!!,
@@ -120,19 +114,14 @@ contract Task5 with Deployable {
           self.nfts.set(index, sender());
         }
       } else {
-          send(SendParameters{
-            to: sender(),
-            value: 0,
-            mode: SendRemainingValue + SendIgnoreErrors,
-            body: Transfer{
-                queryId: msg.queryId,
-                newOwner: msg.prevOwner,
-                responseDestination: msg.prevOwner,
-                customPayload: null,
-                forwardAmount: 0,
-                forwardPayload: emptySlice()
-            }.toCell()
-          });
+        self.reply(Transfer{
+            queryId: msg.queryId,
+            newOwner: msg.prevOwner,
+            responseDestination: msg.prevOwner,
+            customPayload: null,
+            forwardAmount: 0,
+            forwardPayload: emptySlice()
+        }.toCell());
       }
     } 
   }
