@@ -82,10 +82,8 @@ contract Task5 with Deployable {
       self.nfts.set(self.nfts_counter, sender());
       self.nfts_counter = self.nfts_counter + 1;
     } else {
-      if context().value >= ton("2.1") {
-        nativeReserve(ton("2.0"), 4);
-        
-        if self.nfts_counter == 0 {
+      if context().value < ton("2.1") {
+        if context().value >= context().readForwardFee() {
           self.reply(Transfer{
               queryId: msg.queryId,
               newOwner: msg.prevOwner,
@@ -94,36 +92,29 @@ contract Task5 with Deployable {
               forwardAmount: 0,
               forwardPayload: emptySlice()
           }.toCell());
-        } else {
-          let index: Int = random(0, self.nfts_counter - 1);
-          
-          send(SendParameters{
-            to: self.nfts.get(index)!!,
-            value: 0,
-            mode: SendRemainingValue + SendIgnoreErrors,
-            body: Transfer{
-                queryId: msg.queryId,
-                newOwner: msg.prevOwner,
-                responseDestination: msg.prevOwner,
-                customPayload: null,
-                forwardAmount: 0,
-                forwardPayload: emptySlice()
-            }.toCell()
-          });
-
-          self.nfts.set(index, sender());
         }
       } else {
-        if context().value > context().readForwardFee() {
-          self.reply(Transfer{
+        nativeReserve(ton("2.0"), 4);
+        let to: Address = sender();
+        let index: Int = random(0, self.nfts_counter);
+        if (index < self.nfts_counter) {
+          to = self.nfts.get(index)!!;
+          self.nfts.set(index, sender());
+        }
+
+        send(SendParameters{
+          to: to,
+          value: 0,
+          mode: SendRemainingBalance + SendIgnoreErrors,
+          body: Transfer{
               queryId: msg.queryId,
               newOwner: msg.prevOwner,
               responseDestination: msg.prevOwner,
               customPayload: null,
               forwardAmount: 0,
               forwardPayload: emptySlice()
-          }.toCell());
-        }
+          }.toCell()
+        });
       }
     } 
   }
