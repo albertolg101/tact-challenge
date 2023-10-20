@@ -161,13 +161,14 @@ contract Task5 with Deployable {
         mode: SendRemainingValue + SendIgnoreErrors,
         body: AdminWithdrawalAllNFTs { queryId: msg.queryId }.toCell()
       });
-    } else {
-      send(SendParameters{
-        to: self.owner,
-        value: 0,
-        mode: SendRemainingValue + SendIgnoreErrors
-      });
-    }
+    } 
+    // else {
+    //   send(SendParameters{
+    //     to: self.owner,
+    //     value: 0,
+    //     mode: SendRemainingValue + SendIgnoreErrors
+    //   });
+    // }
   }
 
   get fun profit(): Int { 
