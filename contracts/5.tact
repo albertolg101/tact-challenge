@@ -87,14 +87,19 @@ contract Task5 with Deployable {
       } else {
         nativeReserve(0, 4);
       }
-      self.reply(Transfer{
-        queryId: msg.queryId,
-        newOwner: msg.prevOwner,
-        responseDestination: msg.prevOwner,
-        customPayload: emptyCell(),
-        forwardAmount: 0,
-        forwardPayload: emptySlice()
-      }.toCell());
+      send(SendParameters{
+        to: sender(),
+        value: 0,
+        mode: SendRemainingValue + SendIgnoreErrors,
+        body: Transfer{
+          queryId: msg.queryId,
+          newOwner: msg.prevOwner,
+          responseDestination: msg.prevOwner,
+          customPayload: emptyCell(),
+          forwardAmount: 0,
+          forwardPayload: emptySlice()
+        }.toCell()
+      });
     } 
   }
 
