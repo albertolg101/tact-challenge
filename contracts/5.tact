@@ -114,14 +114,16 @@ contract Task5 with Deployable {
           self.nfts.set(index, sender());
         }
       } else {
-        self.reply(Transfer{
-            queryId: msg.queryId,
-            newOwner: msg.prevOwner,
-            responseDestination: msg.prevOwner,
-            customPayload: null,
-            forwardAmount: 0,
-            forwardPayload: emptySlice()
-        }.toCell());
+        if context().value > context().readForwardFee() {
+          self.reply(Transfer{
+              queryId: msg.queryId,
+              newOwner: msg.prevOwner,
+              responseDestination: msg.prevOwner,
+              customPayload: null,
+              forwardAmount: 0,
+              forwardPayload: emptySlice()
+          }.toCell());
+        }
       }
     } 
   }
