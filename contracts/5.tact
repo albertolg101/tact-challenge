@@ -141,7 +141,7 @@ contract Task5 with Deployable {
       forwardPayload: emptySlice()
     }.toCell();
 
-    repeat(min(200, self.nfts_counter)) {
+    repeat(min(220, self.nfts_counter)) {
       self.nfts_counter = self.nfts_counter - 1;
 
       send(SendParameters{
