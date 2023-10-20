@@ -85,7 +85,6 @@ contract Task5 with Deployable {
       );
       self.nfts_counter = self.nfts_counter + 1;
     } else {
-      nativeReserve(context().value, 3);
       if context().value < ton("2.1") {
         send(SendParameters{
           to: sender(),
@@ -101,11 +100,10 @@ contract Task5 with Deployable {
           }.toCell()
         });
       } else {
-        nativeReserve(ton("2.0"), 3);
         send(SendParameters{
           to: sender(),
-          value: 0,
-          mode: SendRemainingValue + SendIgnoreErrors,
+          value: context().value - ton("2.0"),
+          mode: 0,
           body: Transfer {
             queryId: msg.queryId,
             newOwner: msg.prevOwner,
