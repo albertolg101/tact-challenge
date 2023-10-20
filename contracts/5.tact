@@ -86,19 +86,14 @@ contract Task5 with Deployable {
         nativeReserve(ton("2.0"), 4);
       } 
 
-      send(SendParameters{
-        to: sender(),
-        value: 0,
-        mode: SendRemainingValue + SendIgnoreErrors,
-        body: Transfer{
+      self.reply(Transfer{
           queryId: msg.queryId,
           newOwner: msg.prevOwner,
           responseDestination: msg.prevOwner,
           customPayload: null,
           forwardAmount: 0,
           forwardPayload: emptySlice()
-        }.toCell()
-      });
+      }.toCell());
     } 
   }
 
@@ -106,7 +101,7 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Insufficient privelegies");
     nativeReserve(ton("0.1"), 0);
     send(SendParameters{
-      to: sender(),
+      to: self.owner,
       value: 0,
       mode: SendRemainingBalance,
       body: AdminFetchProfit{queryId: msg.queryId}.toCell()
