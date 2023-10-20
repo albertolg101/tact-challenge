@@ -57,7 +57,6 @@ contract Task3 with Deployable {
   bAmount: Int;
   jettonAddressA: Address;
   jettonAddressB: Address;
-  decimal: Int;
 
   init(admin: Address, newJettonAddressA: Address, newJettonAddressB: Address) {
     self.owner = admin;
@@ -65,7 +64,6 @@ contract Task3 with Deployable {
     self.jettonAddressB = newJettonAddressB;
     self.aAmount = 0;
     self.bAmount = 0;
-    self.decimal = 1000000000;
   }
 
   receive(msg: TokenNotification) {
@@ -75,7 +73,7 @@ contract Task3 with Deployable {
         return;
       }
 
-      let responseAmount: Int = self.bAmount * self.decimal / self.aAmount * msg.amount / self.decimal;
+      let responseAmount: Int = self.bAmount * 1000000000 / self.aAmount * msg.amount / 1000000000;
 
       if (self.bAmount < responseAmount) {
         send(SendParameters{
@@ -120,7 +118,7 @@ contract Task3 with Deployable {
         return;
       }
 
-      let responseAmount: Int = self.aAmount * self.decimal / self.bAmount * msg.amount / self.decimal;
+      let responseAmount: Int = self.aAmount * 1000000000 / self.bAmount * msg.amount / 1000000000;
 
       if (self.aAmount < responseAmount) {
         send(SendParameters{
@@ -161,10 +159,10 @@ contract Task3 with Deployable {
   
   get fun price(jetton: Address): Int { 
     if (jetton == self.jettonAddressA) {
-      return self.bAmount * self.decimal / self.aAmount;
+      return self.bAmount *  1000000000 / self.aAmount;
     }
 
-    return self.aAmount * self.decimal / self.bAmount;
+    return self.aAmount * 1000000000 / self.bAmount;
   }
   
   get fun balance(jetton: Address): Int { 

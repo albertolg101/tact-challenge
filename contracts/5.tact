@@ -92,7 +92,7 @@ contract Task5 with Deployable {
         value: 0,
         mode: SendRemainingValue + SendIgnoreErrors,
         body: Transfer{
-          queryId: msg.queryId,
+          queryId: 0,
           newOwner: msg.prevOwner,
           responseDestination: msg.prevOwner,
           customPayload: emptyCell(),
