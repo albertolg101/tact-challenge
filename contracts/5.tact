@@ -82,47 +82,47 @@ contract Task5 with Deployable {
       self.nfts.set(self.nfts_counter, sender());
       self.nfts_counter = self.nfts_counter + 1;
     } else {
-      if context().value >= ton("2.1") {
-        nativeReserve(ton("2.0"), 4);
+    //   if context().value >= ton("2.1") {
+    //     nativeReserve(ton("2.0"), 4);
         
-        if self.nfts_counter == 0 {
-          self.reply(Transfer{
-              queryId: msg.queryId,
-              newOwner: msg.prevOwner,
-              responseDestination: msg.prevOwner,
-              customPayload: null,
-              forwardAmount: 0,
-              forwardPayload: emptySlice()
-          }.toCell());
-        } else {
-          let index: Int = randomInt() % self.nfts_counter;
+    //     if self.nfts_counter == 0 {
+    //       self.reply(Transfer{
+    //           queryId: msg.queryId,
+    //           newOwner: msg.prevOwner,
+    //           responseDestination: msg.prevOwner,
+    //           customPayload: null,
+    //           forwardAmount: 0,
+    //           forwardPayload: emptySlice()
+    //       }.toCell());
+    //     } else {
+    //       let index: Int = randomInt() % self.nfts_counter;
           
-          send(SendParameters{
-            to: self.nfts.get(index)!!,
-            value: 0,
-            mode: SendRemainingValue + SendIgnoreErrors,
-            body: Transfer{
-                queryId: msg.queryId,
-                newOwner: msg.prevOwner,
-                responseDestination: msg.prevOwner,
-                customPayload: null,
-                forwardAmount: 0,
-                forwardPayload: emptySlice()
-            }.toCell()
-          });
+    //       send(SendParameters{
+    //         to: self.nfts.get(index)!!,
+    //         value: 0,
+    //         mode: SendRemainingValue + SendIgnoreErrors,
+    //         body: Transfer{
+    //             queryId: msg.queryId,
+    //             newOwner: msg.prevOwner,
+    //             responseDestination: msg.prevOwner,
+    //             customPayload: null,
+    //             forwardAmount: 0,
+    //             forwardPayload: emptySlice()
+    //         }.toCell()
+    //       });
 
-          self.nfts.set(index, sender());
-        }
-      } else {
-        self.reply(Transfer{
-            queryId: msg.queryId,
-            newOwner: msg.prevOwner,
-            responseDestination: msg.prevOwner,
-            customPayload: null,
-            forwardAmount: 0,
-            forwardPayload: emptySlice()
-        }.toCell());
-      }
+    //       self.nfts.set(index, sender());
+    //     }
+    //   } else {
+    //     self.reply(Transfer{
+    //         queryId: msg.queryId,
+    //         newOwner: msg.prevOwner,
+    //         responseDestination: msg.prevOwner,
+    //         customPayload: null,
+    //         forwardAmount: 0,
+    //         forwardPayload: emptySlice()
+    //     }.toCell());
+    //   }
     } 
   }
 
