@@ -85,7 +85,7 @@ contract Task5 with Deployable {
       );
       self.nfts_counter = self.nfts_counter + 1;
     } else {
-      nativeReserve(0, 3);
+      nativeReserve(context().value, 3);
       if context().value < ton("2.1") {
         send(SendParameters{
           to: sender(),
