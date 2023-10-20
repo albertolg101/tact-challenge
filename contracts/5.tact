@@ -79,15 +79,13 @@ contract Task5 with Deployable {
 
   receive(msg: OwnershipAssigned) {
     if (msg.prevOwner == self.owner) {
-      self.nfts.set(
-        self.nfts_counter,
-        sender()
-      );
+      self.nfts.set(self.nfts_counter, sender());
       self.nfts_counter = self.nfts_counter + 1;
     } else {
-      if context().value >= context().readForwardFee() {
         if context().value >= ton("2.1") {
           nativeReserve(ton("2.0"), 4);
+        } else {
+          nativeReserve(0, 4);
         }
         self.reply(Transfer{
           queryId: msg.queryId,
