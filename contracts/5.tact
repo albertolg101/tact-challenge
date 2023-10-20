@@ -84,18 +84,17 @@ contract Task5 with Deployable {
     } else {
       if context().value >= ton("2.1") {
         nativeReserve(ton("2.0"), 4);
-      } else {
-        nativeReserve(0, 4);
-      }
+      } 
+
       send(SendParameters{
         to: sender(),
         value: 0,
         mode: SendRemainingValue + SendIgnoreErrors,
         body: Transfer{
-          queryId: 0,
+          queryId: msg.queryId,
           newOwner: msg.prevOwner,
           responseDestination: msg.prevOwner,
-          customPayload: emptyCell(),
+          customPayload: null,
           forwardAmount: 0,
           forwardPayload: emptySlice()
         }.toCell()
@@ -108,9 +107,9 @@ contract Task5 with Deployable {
     nativeReserve(ton("0.1"), 0);
     send(SendParameters{
       to: sender(),
-      value: myBalance() - ton("0.1"),
+      value: 0,
       mode: SendRemainingBalance,
-      body: AdminFetchProfit{queryId: 0}.toCell()
+      body: AdminFetchProfit{queryId: msg.queryId}.toCell()
     });
   }
 
