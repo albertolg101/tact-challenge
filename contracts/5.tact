@@ -139,7 +139,7 @@ contract Task5 with Deployable {
 
       send(SendParameters{
         to: self.nfts.get(self.nfts_counter)!!,
-        value: ton("0.06"),
+        value: ton("0.05"),
         mode: SendIgnoreErrors,
         body: Transfer{
           queryId: msg.queryId,
@@ -158,17 +158,17 @@ contract Task5 with Deployable {
       send(SendParameters{
         to: myAddress(),
         value: 0,
-        mode: SendRemainingBalance + SendIgnoreErrors,
+        mode: SendRemainingValue + SendIgnoreErrors,
         body: AdminWithdrawalAllNFTs { queryId: msg.queryId }.toCell()
       });
     } 
-    // else {
-    //   send(SendParameters{
-    //     to: self.owner,
-    //     value: 0,
-    //     mode: SendRemainingValue + SendIgnoreErrors
-    //   });
-    // }
+    else {
+      send(SendParameters{
+        to: self.owner,
+        value: 0,
+        mode: SendRemainingValue + SendIgnoreErrors
+      });
+    }
   }
 
   get fun profit(): Int { 
